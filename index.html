@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>File Upload Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .upload-box {
+      border: 2px dashed #007bff;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+    .file-list {
+      list-style: none;
+      padding: 0;
+    }
+    .file-item {
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .progress {
+      height: 8px;
+      background: #eee;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+    .progress-bar {
+      height: 8px;
+      background: #28a745;
+      width: 0%;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>File Upload Manager</h2>
+
+  <!-- Upload Box -->
+  <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+    Click here or drag & drop files to upload
+    <input type="file" id="fileInput" multiple hidden>
+  </div>
+
+  <!-- File List -->
+  <ul id="fileList" class="file-list"></ul>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const fileList = document.getElementById("fileList");
+
+    // When files are selected
+    fileInput.addEventListener("change", () => {
+      handleFiles(fileInput.files);
+    });
+
+    // Handle drag & drop
+    const uploadBox = document.querySelector(".upload-box");
+    uploadBox.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      uploadBox.style.background = "#e3f2fd";
+    });
+    uploadBox.addEventListener("dragleave", () => {
+      uploadBox.style.background = "transparent";
+    });
+    uploadBox.addEventListener("drop", (e) => {
+      e.preventDefault();
+      uploadBox.style.background = "transparent";
+      handleFiles(e.dataTransfer.files);
+    });
+
+    // Function to handle selected files
+    function handleFiles(files) {
+      [...files].forEach(file => {
+        const li = document.createElement("li");
+        li.className = "file-item";
+        li.innerHTML = `
+          <strong>${file.name}</strong> (${Math.round(file.size / 1024)} KB)
+          <div class="progress"><div class="progress-bar"></div></div>
+        `;
+        fileList.appendChild(li);
+
+        // Simulate upload
+        simulateUpload(li.querySelector(".progress-bar"));
+      });
+    }
+
+    // Fake upload progress
+    function simulateUpload(progressBar) {
+      let progress = 0;
+      const interval = setInterval(() => {
+        if (progress >= 100) {
+          clearInterval(interval);
+        } else {
+          progress += 5;
+          progressBar.style.width = progress + "%";
+        }
+      }, 200);
+    }
+  </script>
+
+</body>
+</html>
